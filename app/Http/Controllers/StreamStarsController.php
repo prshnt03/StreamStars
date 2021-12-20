@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\StreamStars;
 use Illuminate\Http\Request;
 use DB;
+use App\Http\Controllers\Input;
+use App\Http\Controllers\LengthAwarePaginator;
 
 class StreamStarsController extends Controller
 {
@@ -52,6 +54,8 @@ class StreamStarsController extends Controller
         
         if($type == 'game_streamers'){
             $gameStreamers = $this->getGameStreamers();
+
+            //$gameStreamers = arrayPaginator($gameStreamers, $request)
             return response()->json($gameStreamers);
         }
         
@@ -149,6 +153,16 @@ class StreamStarsController extends Controller
     public function getGameStreamers(){
         $gameStreamers = DB::select("SELECT COUNT(*) streamers,game_name FROM `stream_stars` GROUP BY game_name HAVING streamers > 0");
         return $gameStreamers;
+    }
+
+    public function arrayPaginator($array, $request)
+    {
+        $page = Input::get('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+
+        return new LengthAwarePaginator(array_slice($array, $offset, $perPage, true), count($array), $perPage, $page,
+            ['path' => $request->url(), 'query' => $request->query()]);
     }
 
     //Game name and streamer

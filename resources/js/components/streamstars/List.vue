@@ -21,42 +21,58 @@
                   <th>Started At</th>
                 </tr>
               </thead>
-              <tbody v-if="arr_streams.length > 0">
-                <tr v-for="(stream, key) in arr_streams" :key="key">
-                  <td>{{ stream.id }}</td>
-                  <td>
-                    {{ stream.channel_name }}
-                    <p style="color: black; font-size: 10px">
-                      {{ stream.stream_title }}
-                    </p>
-                  </td>
-                  <td>{{ stream.game_name }}</td>
-                  <td>{{ stream.viewers_count }}</td>
+              <!--<tbody v-if="arr_streams.data.length > 0">-->
+              <tr v-for="(stream, key) in arr_streams.data" :key="key">
+                <td>{{ stream.id }}</td>
+                <td>
+                  {{ stream.channel_name }}
+                  <p style="color: black; font-size: 10px">
+                    {{ stream.stream_title }}
+                  </p>
+                </td>
+                <td>{{ stream.game_name }}</td>
+                <td>{{ stream.viewers_count }}</td>
 
-                  <td style="color: blue; font-size: 12px">
-                    {{ stream.started_at }}
-                  </td>
+                <td style="color: blue; font-size: 12px">
+                  {{ stream.started_at }}
+                </td>
 
-                  <!--<td>
+                <!--<td>
                                         <router-link :to='{name:"categoryEdit",params:{id:stream.id}}' class="btn btn-success">Edit</router-link>
                                         <button type="button" @click="deleteStream(stream.id)" class="btn btn-danger">Delete</button>
                                     </td>
                                      -->
-                </tr>
-              </tbody>
+              </tr>
+              <!-- </tbody>
               <tbody v-else>
                 <tr>
                   <td colspan="4" align="center">No Stream Found.</td>
                 </tr>
-              </tbody>
+              </tbody> -->
             </table>
           </div>
-            <pagination align="center" :data="arr_streams" @pagination-change-page="list"></pagination>
+
+          <div class="card-footer">
+            <pagination
+              :data="arr_streams"
+              @pagination-change-page="getStreamStars"
+            ></pagination>
+          </div>
+
           <!-- <pagination align="center" :data="arr_streams" @pagination-change-page="list"></pagination>
                             -->
         </div>
       </div>
     </div>
+<div class="card-footer">
+    <pagination
+      align="center"
+      :data="Object.fromEntries(arr_streams.data)"
+      @pagination-change-page="getStreamStars"
+    >
+      <span slot="prev-nav">Previous </span>
+      <span slot="next-nav">Next</span>
+    </pagination> </div>
 
     <br /><br />
 
@@ -109,19 +125,18 @@
 </template>
 
 <script>
-
-import pagination from 'laravel-vue-pagination'
+import pagination from "laravel-vue-pagination";
 export default {
   name: "arr_streams",
   name: "arr_median",
   name: "arr_game_streamers",
-  components:{
-    pagination
+  components: {
+    pagination,
   },
 
   data() {
     return {
-      arr_streams: [],
+      arr_streams: {},
       arr_median: [],
       arr_game_streamers: [],
     };
@@ -130,18 +145,23 @@ export default {
     this.getStreamStars(), this.getMedianViewers(), this.getGameStreamers();
   },
   methods: {
-    async getStreamStars(page=1) {
+    async getStreamStars(page = 1) {
       // /api/stream_stars?orderBy=viewers_count&direction=Desc
+      if (typeof page === "undefined") {
+        page = 1;
+      }
       await this.axios
-        .get("/api/stream_stars?orderBy=viewers_count&direction=Desc&page=${page}")
+        .get(
+          "/api/stream_stars?orderBy=viewers_count&direction=Desc&page=" + page
+        )
         .then((response) => {
           console.log(response);
-          this.arr_streams = response.data.data;
+          this.arr_streams = response.data;
           // this.arr_streams.sort(viewers_count)
         })
         .catch((error) => {
           console.log(error);
-          this.arr_streams = [];
+          this.arr_streams = {};
         });
     }, //api/stream_stars?type=median
     async getMedianViewers() {
@@ -186,7 +206,7 @@ export default {
 </script>
 
 <style scoped>
-    .pagination{
-        margin-bottom: 0;
-    }
+.pagination {
+  margin-bottom: 0;
+}
 </style>

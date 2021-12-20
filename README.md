@@ -64,6 +64,13 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## Link
 https://techvblogs.com/blog/build-crud-app-with-laravel-and-vuejs
 
+
+pagination
+
+https://www.itsolutionstuff.com/post/laravel-vue-js-pagination-example-with-demoexample.html
+
+
+
 ## Commands
 composer create-project --prefer-dist laravel/laravel crud-spa
 or
