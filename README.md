@@ -69,14 +69,24 @@ composer create-project --prefer-dist laravel/laravel crud-spa
 or
 laravel new crud-spa
 
+
+
 npm install
+
 npm install vue vue-router vue-axios --save
+
 php artisan make:model Category -mcr
+
 php artisan migrate
+
 npm run watch
+
 npm update vue-loader
+
 npm run dev
+
 php artisan serve
+
 
 ##Links
 https://github.com/guzzle/guzzle
